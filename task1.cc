@@ -94,24 +94,30 @@ int main(){
 					struct tm* my_tm = localtime(&my_time);
 					int sleep_time = for_sleep(shedule[0], shedule[1], shedule[2], my_tm->tm_hour, my_tm->tm_min, my_tm->tm_sec);
 					if (sleep_time > 0){
-						sleep((unsigned int)sleep_time);
-						pid_t pidinfor = fork();
-						struct stat change;
-						stat("mycrontab", &change);
-						if(mycron_stat.st_mtime == change.st_mtime){
+						for(int l = 0; l < sleep_time; l ++){
+							sleep(1);
+							struct stat change;
+							stat("mycrontab", &change);
+							if(mycron_stat.st_mtime != change.st_mtime){
+								ifexit = true;
+								break;	
+							}
+						}
+						if(!ifexit){
+							pid_t pidinfor = fork();
 							if(pidinfor == 0){
 								execvp(args[0], &args[0]);
 								perror(args[0]);	
 								for (size_t i = 0; i < args.size(); i++) free(args[i]);
 								return 0;
-							}							
-						} else ifexit = true;
-						int statusss;
-						waitpid(pidinfor, &statusss, 0);
+							}
+							int statusss;
+							waitpid(pidinfor, &statusss, 0);							
+						}
 						sleep(5);	
 					}
 					else{
-						printf("LoL, you opozdaLLL!!!\n\n");
+						printf("You are late\n\n");
 						break;
 					} 
 				}
