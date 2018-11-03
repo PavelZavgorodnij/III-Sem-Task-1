@@ -46,7 +46,7 @@ int for_sleep(int h, int m, int s, int h0, int m0, int s0){
 int main(){
 	pid_t top_manager = fork();
 	bool full_exit = false;
-	if(top_manager == 0) for(;;)){
+	if(top_manager == 0) for(;;){
 		if(full_exit) break;
 		struct stat mycron_stat;
 		stat("mycrontab", &mycron_stat);
